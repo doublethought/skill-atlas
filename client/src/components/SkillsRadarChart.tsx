@@ -71,6 +71,15 @@ export default function SkillsRadarChart({
   onDeleteDesigner,
   skillCategories,
 }: SkillsRadarChartProps) {
+  // Create a stable color map based on designer's position in the full list
+  const designerColorMap = useMemo(() => {
+    const colorMap = new Map<string, string>();
+    designers.forEach((designer, index) => {
+      colorMap.set(designer.id, CHART_COLORS[index % CHART_COLORS.length]);
+    });
+    return colorMap;
+  }, [designers]);
+
   const chartData = useMemo(() => {
     return skillCategories.map((category) => {
       const dataPoint: Record<string, string | number> = { 
@@ -114,19 +123,22 @@ export default function SkillsRadarChart({
               tickCount={6}
               axisLine={false}
             />
-            {selectedDesigners.map((designer, index) => (
-              <Radar
-                key={designer.id}
-                name={designer.name}
-                dataKey={designer.id}
-                stroke={CHART_COLORS[index % CHART_COLORS.length]}
-                fill={CHART_COLORS[index % CHART_COLORS.length]}
-                fillOpacity={0.12}
-                strokeWidth={2}
-                animationDuration={400}
-                animationEasing="ease-out"
-              />
-            ))}
+            {selectedDesigners.map((designer) => {
+              const color = designerColorMap.get(designer.id) || CHART_COLORS[0];
+              return (
+                <Radar
+                  key={designer.id}
+                  name={designer.name}
+                  dataKey={designer.id}
+                  stroke={color}
+                  fill={color}
+                  fillOpacity={0.12}
+                  strokeWidth={2}
+                  animationDuration={400}
+                  animationEasing="ease-out"
+                />
+              );
+            })}
           </RadarChart>
         </ResponsiveContainer>
       </div>
@@ -135,9 +147,9 @@ export default function SkillsRadarChart({
           Team Members
         </h3>
         <div className="space-y-2">
-          {designers.map((designer, index) => {
+          {designers.map((designer) => {
             const isSelected = selectedDesignerIds.has(designer.id);
-            const color = CHART_COLORS[index % CHART_COLORS.length];
+            const color = designerColorMap.get(designer.id) || CHART_COLORS[0];
             
             return (
               <div
