@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Plus, Home, Bell, HelpCircle, Settings, User, Users } from "lucide-react";
+import { Plus, Home, Bell, HelpCircle, Settings, User, Users, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
@@ -13,6 +13,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -45,6 +55,7 @@ function getAvatarColorClass(name: string) {
 export default function ManagersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newManagerName, setNewManagerName] = useState("");
+  const [deleteManagerId, setDeleteManagerId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const { data: managers, isLoading } = useQuery<Manager[]>({
@@ -74,11 +85,46 @@ export default function ManagersPage() {
     },
   });
 
+  const deleteManagerMutation = useMutation({
+    mutationFn: async (managerId: string) => {
+      await apiRequest("DELETE", `/api/managers/${managerId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/managers"] });
+      setDeleteManagerId(null);
+      toast({
+        title: "Manager removed",
+        description: "The manager and their team have been removed.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to remove manager. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleAddManager = () => {
     if (newManagerName.trim()) {
       createManagerMutation.mutate(newManagerName.trim());
     }
   };
+
+  const handleDeleteManager = (e: React.MouseEvent, managerId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDeleteManagerId(managerId);
+  };
+
+  const confirmDeleteManager = () => {
+    if (deleteManagerId) {
+      deleteManagerMutation.mutate(deleteManagerId);
+    }
+  };
+
+  const managerToDelete = managers?.find((m) => m.id === deleteManagerId);
 
   return (
     <div className="min-h-screen bg-background">
@@ -111,8 +157,8 @@ export default function ManagersPage() {
       </nav>
 
       <div className="bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 pt-4 pb-0">
-          <div className="flex items-center justify-between gap-4 mb-4">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
             <span className="text-sm font-medium text-foreground">
               Info Pro Managers
             </span>
@@ -120,12 +166,6 @@ export default function ManagersPage() {
               <Plus className="w-4 h-4 mr-2" />
               Add Manager
             </Button>
-          </div>
-
-          <div className="flex items-center gap-6 -mb-px">
-            <button className="font-sans text-sm text-primary font-medium pb-3 border-b-2 border-primary transition-colors">
-              Managers
-            </button>
           </div>
         </div>
       </div>
@@ -152,7 +192,7 @@ export default function ManagersPage() {
               return (
                 <Link key={manager.id} href={`/managers/${manager.id}`}>
                   <Card 
-                    className="p-6 cursor-pointer hover:border-primary/50 transition-colors"
+                    className="p-6 cursor-pointer hover:border-primary/50 transition-colors group"
                     data-testid={`card-manager-${manager.id}`}
                   >
                     <div className="flex items-center gap-4">
@@ -161,7 +201,7 @@ export default function ManagersPage() {
                           {getInitials(manager.name)}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
+                      <div className="flex-1">
                         <h3 className="font-sans font-medium text-foreground" data-testid={`text-manager-name-${manager.id}`}>
                           {manager.name}
                         </h3>
@@ -170,6 +210,15 @@ export default function ManagersPage() {
                           View team
                         </p>
                       </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                        onClick={(e) => handleDeleteManager(e, manager.id)}
+                        data-testid={`delete-manager-${manager.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
                   </Card>
                 </Link>
@@ -232,6 +281,27 @@ export default function ManagersPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!deleteManagerId} onOpenChange={(open) => !open && setDeleteManagerId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Manager</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove {managerToDelete?.name}? This will also remove all designers on their team. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteManager}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              data-testid="button-confirm-delete-manager"
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
