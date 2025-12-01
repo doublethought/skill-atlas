@@ -74,35 +74,44 @@ export default function ScaleSlider({
         </Select>
       </div>
 
-      <div className="relative pt-8 pb-6">
-        <div className="absolute left-0 right-0 top-1/2 h-1 bg-muted rounded-full" />
-
-        <div className="relative flex justify-between">
+      <div className="relative">
+        <div className="flex justify-between mb-2">
           {[1, 2, 3, 4, 5].map((score) => (
             <div
               key={score}
               className="flex flex-col items-center"
               style={{ width: "20%" }}
             >
-              <div className="flex flex-col items-center gap-1 min-h-[60px]">
-                {groupedByScore[score].map((designer, idx) => (
+              <div className="flex flex-wrap justify-center gap-1 min-h-[48px] items-end">
+                {groupedByScore[score].map((designer) => (
                   <div
                     key={designer.id}
-                    style={{
-                      transform: `translateX(${(idx - (groupedByScore[score].length - 1) / 2) * 12}px)`,
-                    }}
+                    className="transition-all duration-300 ease-out"
                   >
                     <DesignerAvatar designer={designer} size="md" />
                   </div>
                 ))}
               </div>
-              <div className="w-3 h-3 rounded-full bg-muted-foreground/30 mt-2" />
+            </div>
+          ))}
+        </div>
+
+        <div className="relative h-6 flex items-center">
+          <div className="absolute left-[10%] right-[10%] h-[3px] bg-muted rounded-full" />
+          {[1, 2, 3, 4, 5].map((score) => (
+            <div
+              key={score}
+              className="absolute flex flex-col items-center"
+              style={{ left: `${(score - 1) * 20 + 10}%`, transform: "translateX(-50%)" }}
+            >
+              <div className="w-[3px] h-4 bg-muted-foreground/40 rounded-full" />
+              <span className="font-mono text-xs text-muted-foreground mt-1">{score}</span>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="flex justify-between items-center text-xs font-sans uppercase tracking-wider text-muted-foreground">
+      <div className="flex justify-between items-center text-xs font-sans uppercase tracking-wider text-muted-foreground pt-2">
         <div className="flex items-center gap-2">
           <div className={`w-3 h-3 rounded-sm ${leftColor}`} />
           <span>{leftLabel}</span>
