@@ -28,8 +28,8 @@ export default function ArchetypeGrid({ designers }: ArchetypeGridProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {ARCHETYPES.map((archetype) => (
           <div key={archetype} className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+            <div className="flex items-center gap-3">
+              <span className="font-sans text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 {archetype.toUpperCase()}
               </span>
               <Badge variant="secondary" className="font-mono text-xs">

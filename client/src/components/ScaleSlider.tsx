@@ -102,7 +102,7 @@ export default function ScaleSlider({
         </div>
       </div>
 
-      <div className="flex justify-between items-center text-xs font-mono uppercase tracking-wider text-muted-foreground">
+      <div className="flex justify-between items-center text-xs font-sans uppercase tracking-wider text-muted-foreground">
         <div className="flex items-center gap-2">
           <div className={`w-3 h-3 rounded-sm ${leftColor}`} />
           <span>{leftLabel}</span>

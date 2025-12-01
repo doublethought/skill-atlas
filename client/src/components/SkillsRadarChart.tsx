@@ -96,15 +96,15 @@ export default function SkillsRadarChart({
           </RadarChart>
         </ResponsiveContainer>
       </div>
-      <div className="lg:w-64 border-l border-border pl-6">
-        <h3 className="font-sans font-semibold text-sm text-foreground mb-4 uppercase tracking-wide">
+      <div className="lg:w-72 border-l border-border pl-8">
+        <h3 className="font-sans font-semibold text-sm text-foreground mb-6 uppercase tracking-wide">
           Team Members
         </h3>
-        <div className="space-y-3">
+        <div className="space-y-1">
           {designers.map((designer, index) => (
             <label
               key={designer.id}
-              className="flex items-center gap-3 cursor-pointer hover-elevate rounded-md p-2 -ml-2"
+              className="flex items-center gap-4 cursor-pointer hover-elevate rounded-md p-3 -ml-3"
               data-testid={`toggle-designer-${designer.id}`}
             >
               <Checkbox
@@ -117,8 +117,8 @@ export default function SkillsRadarChart({
                     : "transparent",
                 }}
               />
-              <div className="flex flex-col">
-                <span className="font-sans text-sm text-foreground">{designer.name}</span>
+              <div className="flex flex-col gap-1">
+                <span className="font-sans text-sm text-foreground leading-tight">{designer.name}</span>
                 <span className="font-mono text-xs text-muted-foreground">
                   {designer.level}
                 </span>
