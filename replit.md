@@ -6,37 +6,30 @@ A data visualization dashboard for mapping and analyzing team designer skills ac
 
 ## Current State (December 2025)
 
-**Status**: Working prototype with mock data
+**Status**: Full-stack application with PostgreSQL persistence
 
 **What's Built**:
-- Atlassian-style layout matching their product UI patterns
-- Breadcrumb: "Info Pro Managers / Vincent Feeney" (Info Pro Managers will be clickable link)
-- Profile header with avatar and "Vincent Feeney" name in large font
+- Multi-manager navigation system with managers listing page (/) and team dashboards (/managers/:managerId)
+- Breadcrumb: "Info Pro Managers / [Manager Name]" with clickable navigation
+- Manager listing page with "Add Manager" CTA and manager cards
+- Profile header with avatar and manager name in large font
 - Single active "Team shape" tab
 - Skills radar chart with designer toggles, abbreviated axis labels, smooth animations
 - Role maturity slider with fixed tick marks and level filtering
 - Role fit slider with level filtering
 - Archetypes grid (Craft-y, Systems-y, Business-y)
-- Add Designer modal with full form
-- 7 mock designers with full skill data
+- Add Designer modal with full form (name, level, archetype, maturity, fit, 10 skill categories)
+- Delete designer functionality with confirmation dialog (appears on hover in radar chart sidebar and archetype grid)
+- Full CRUD API for managers and designers
+- PostgreSQL database persistence via Neon
 
-**What's Using Mock Data** (marked with //todo comments):
-- Designer data in Dashboard.tsx (INITIAL_DESIGNERS array)
-- All state is in-memory, not persisted
-
-**Next Steps to Consider**:
-- Connect to database for data persistence
-- Implement backend API endpoints
-- Add edit/delete designer functionality
-
-**Planned Feature: Multi-Manager Navigation**:
-- Breadcrumb: "Info Pro Managers / [Manager Name]" where Info Pro Managers is clickable
-- Clicking "Info Pro Managers" goes to managers listing page (/managers)
-- Managers listing page shows all managers with "Add Manager" CTA
-- Clicking a manager navigates to their team view (/managers/:managerId)
-- Current page shows: manager avatar + name in header, single "Team shape" tab
-- Each manager has their own set of designers
-- Data model needs: Manager entity with relationship to Designers
+**Key Features**:
+- Managers can be created, viewed, and managed from the listing page
+- Each manager has their own team of designers
+- Designers can be added, viewed, and deleted from the team dashboard
+- All data persisted to PostgreSQL database
+- Real-time data fetching with React Query
+- Delete confirmation dialogs for safety
 
 ## User Preferences
 
@@ -48,7 +41,9 @@ Preferred communication style: Simple, everyday language.
 
 **Framework**: React 18 with TypeScript, using Vite as the build tool and development server.
 
-**Routing**: Wouter library for lightweight client-side routing. Single-page application with `/` as the main dashboard route.
+**Routing**: Wouter library for lightweight client-side routing.
+- `/` - Managers listing page
+- `/managers/:managerId` - Team dashboard for specific manager
 
 **State Management**: 
 - React hooks for local component state
@@ -68,23 +63,31 @@ Preferred communication style: Simple, everyday language.
 - Custom spacing scale using Tailwind units (2, 4, 6, 8, 12, 16)
 - Elevation system using rgba-based shadows
 
-**Key Features**:
-- Skills radar chart visualization using Recharts library
-- Designer archetype categorization (Craft-y, Systems-y, Business-y)
-- Role maturity and fit-for-role scale sliders with level filtering
-- Interactive designer avatars with tooltips
-- Modal-based designer addition workflow
+**Key Components**:
+- ManagersPage: Manager listing with add manager modal
+- Dashboard: Team skills dashboard with radar chart, sliders, archetypes
+- SkillsRadarChart: Interactive radar chart with designer toggles and delete functionality
+- ScaleSlider: Role maturity and fit visualizations with level filtering
+- ArchetypeGrid: Designer grouping by archetype with delete functionality
+- AddDesignerModal: Comprehensive form for adding designers
 
 ### Backend Architecture
 
 **Server Framework**: Express.js running on Node.js with TypeScript.
 
-**Build Process**: 
-- esbuild for server-side bundling with selective dependency bundling
-- Vite for client-side building
-- Custom build script that bundles allowlisted dependencies to reduce cold start times
+**API Structure**: RESTful API with routes registered under `/api` prefix.
 
-**API Structure**: RESTful API with routes registered under `/api` prefix. Currently implements storage interface pattern but routes are not yet implemented.
+**API Endpoints**:
+- `GET /api/managers` - List all managers
+- `GET /api/managers/:id` - Get single manager
+- `POST /api/managers` - Create manager
+- `PATCH /api/managers/:id` - Update manager
+- `DELETE /api/managers/:id` - Delete manager
+- `GET /api/managers/:managerId/designers` - List designers for a manager
+- `GET /api/designers/:id` - Get single designer
+- `POST /api/managers/:managerId/designers` - Create designer
+- `PATCH /api/designers/:id` - Update designer
+- `DELETE /api/designers/:id` - Delete designer
 
 **Development Mode**: 
 - Vite dev server middleware integrated into Express
@@ -92,25 +95,24 @@ Preferred communication style: Simple, everyday language.
 - Runtime error overlay for development
 - Request logging middleware with duration tracking
 
-**Storage Layer**: Abstract storage interface (`IStorage`) with in-memory implementation (`MemStorage`). Designed to be swapped with database persistence layer.
+**Storage Layer**: DatabaseStorage class implementing IStorage interface with Drizzle ORM.
 
 ### Data Storage Solutions
 
-**Database**: PostgreSQL via Neon serverless driver configured but not yet implemented.
+**Database**: PostgreSQL via Neon serverless driver (neon-http for HTTP connections).
 
-**ORM**: Drizzle ORM with schema definition in `shared/schema.ts`. Currently defines basic user table structure.
+**ORM**: Drizzle ORM with schema definition in `shared/schema.ts`.
 
-**Schema Management**: Drizzle Kit for migrations stored in `/migrations` directory.
+**Schema Management**: Drizzle Kit for schema push (`npm run db:push`).
 
-**Current State**: Application uses in-memory storage (`MemStorage`) with mock designer data. Database integration is configured but not connected to the UI.
-
-**Data Model** (based on TypeScript interfaces):
-- Designer: id, name, level (P30-P70), maturityInRole (1-5), fitForRole (1-5), archetype, skills (key-value pairs)
-- User: id, username, password (basic auth structure defined but unused)
+**Data Model**:
+- Manager: id (UUID), name, avatarColor
+- Designer: id (UUID), managerId (FK), name, level (P30-P70), maturityInRole (1-5), fitForRole (1-5), archetype (Craft-y/Systems-y/Business-y), skills (JSONB)
+- User: id (UUID), username, password (unused, for future auth)
 
 ### Authentication and Authorization
 
-**Current State**: Basic user schema defined with username/password fields, but no authentication is implemented. Application is currently open without login requirements.
+**Current State**: No authentication implemented. Application is open without login requirements.
 
 **Prepared Infrastructure**: 
 - User table schema with unique username constraint
@@ -133,7 +135,7 @@ Preferred communication style: Simple, everyday language.
 - date-fns for date manipulation
 
 **Database & Session**:
-- @neondatabase/serverless for PostgreSQL connectivity
+- @neondatabase/serverless for PostgreSQL connectivity (using neon-http driver)
 - drizzle-orm for database operations
 - connect-pg-simple for PostgreSQL session storage (configured but unused)
 
