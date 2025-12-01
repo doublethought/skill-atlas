@@ -97,7 +97,6 @@ export default function AddDesignerModal({
       skills: values.skills,
     });
     form.reset();
-    onOpenChange(false);
   };
 
   return (
