@@ -51,28 +51,30 @@ export default function ScaleSlider({
 
   return (
     <div className="space-y-4" data-testid={`scale-slider-${valueKey}`}>
-      <div className="flex items-center justify-between gap-4">
-        <h3 className="font-sans font-semibold text-lg text-foreground">{title}</h3>
-        <Select
-          value={levelFilter}
-          onValueChange={(value) => onLevelFilterChange(value as Level | "all")}
-        >
-          <SelectTrigger
-            className="w-32"
-            data-testid={`filter-level-${valueKey}`}
+      {title && (
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="font-sans font-semibold text-sm text-foreground">{title}</h3>
+          <Select
+            value={levelFilter}
+            onValueChange={(value) => onLevelFilterChange(value as Level | "all")}
           >
-            <SelectValue placeholder="Filter by level" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Levels</SelectItem>
-            {LEVELS.map((level) => (
-              <SelectItem key={level} value={level}>
-                {level}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+            <SelectTrigger
+              className="w-32"
+              data-testid={`filter-level-${valueKey}`}
+            >
+              <SelectValue placeholder="Filter by level" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Levels</SelectItem>
+              {LEVELS.map((level) => (
+                <SelectItem key={level} value={level}>
+                  {level}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       <div className="relative">
         <div className="flex justify-between mb-2">

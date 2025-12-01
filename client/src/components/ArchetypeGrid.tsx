@@ -23,8 +23,7 @@ export default function ArchetypeGrid({ designers }: ArchetypeGridProps) {
   );
 
   return (
-    <div className="space-y-6" data-testid="archetype-grid">
-      <h3 className="font-sans font-semibold text-lg text-foreground">Archetypes</h3>
+    <div className="space-y-4" data-testid="archetype-grid">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {ARCHETYPES.map((archetype) => (
           <div key={archetype} className="space-y-4">

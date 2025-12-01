@@ -1,6 +1,13 @@
 import { useState, useCallback } from "react";
 import { Plus, Home, Bell, HelpCircle, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import SkillsRadarChart from "@/components/SkillsRadarChart";
 import ScaleSlider from "@/components/ScaleSlider";
 import ArchetypeGrid from "@/components/ArchetypeGrid";
@@ -207,7 +214,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="sticky top-0 z-50 border-b border-border bg-card">
+      <nav className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
         <div className="h-12 px-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Home className="w-5 h-5 text-foreground" />
@@ -235,29 +242,24 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <header className="border-b border-border bg-background">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="font-sans font-semibold text-2xl text-foreground">
-                Skills Map
-              </h1>
-              <p className="font-sans text-sm text-muted-foreground mt-1">
-                Team skill assessment dashboard
-              </p>
-            </div>
+      <div className="bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto px-6 py-5">
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="font-sans font-semibold text-xl text-foreground">
+              Skills Map
+            </h1>
             <Button onClick={() => setIsModalOpen(true)} data-testid="button-add-designer">
               <Plus className="w-4 h-4 mr-2" />
               Add Designer
             </Button>
           </div>
         </div>
-      </header>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-12">
-        <section className="space-y-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <h2 className="font-sans font-semibold text-lg text-foreground">
+      <main className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+        <section className="border border-card-border rounded-lg bg-card p-6">
+          <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
+            <h2 className="font-sans font-semibold text-base text-foreground">
               Team Skills Overview
             </h2>
             <Button
@@ -271,19 +273,38 @@ export default function Dashboard() {
                 : "Show All"}
             </Button>
           </div>
-          <div className="border border-border rounded-md bg-card p-6">
-            <SkillsRadarChart
-              designers={designers}
-              selectedDesignerIds={selectedDesignerIds}
-              onToggleDesigner={handleToggleDesigner}
-              skillCategories={SKILL_CATEGORIES}
-            />
-          </div>
+          <SkillsRadarChart
+            designers={designers}
+            selectedDesignerIds={selectedDesignerIds}
+            onToggleDesigner={handleToggleDesigner}
+            skillCategories={SKILL_CATEGORIES}
+          />
         </section>
 
-        <section className="border border-border rounded-md bg-card p-6">
+        <section className="border border-card-border rounded-lg bg-card p-6">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="font-sans font-semibold text-base text-foreground">
+              Role Maturity
+            </h2>
+            <Select
+              value={maturityLevelFilter}
+              onValueChange={(value) => setMaturityLevelFilter(value as Level | "all")}
+            >
+              <SelectTrigger className="w-32" data-testid="filter-level-maturityInRole">
+                <SelectValue placeholder="Filter by level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Levels</SelectItem>
+                {(["P30", "P40", "P50", "P60", "P70"] as const).map((level) => (
+                  <SelectItem key={level} value={level}>
+                    {level}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <ScaleSlider
-            title="Role maturity"
+            title=""
             designers={designers}
             valueKey="maturityInRole"
             leftLabel="New in role"
@@ -295,9 +316,30 @@ export default function Dashboard() {
           />
         </section>
 
-        <section className="border border-border rounded-md bg-card p-6">
+        <section className="border border-card-border rounded-lg bg-card p-6">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="font-sans font-semibold text-base text-foreground">
+              Role Fit
+            </h2>
+            <Select
+              value={fitLevelFilter}
+              onValueChange={(value) => setFitLevelFilter(value as Level | "all")}
+            >
+              <SelectTrigger className="w-32" data-testid="filter-level-fitForRole">
+                <SelectValue placeholder="Filter by level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Levels</SelectItem>
+                {(["P30", "P40", "P50", "P60", "P70"] as const).map((level) => (
+                  <SelectItem key={level} value={level}>
+                    {level}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <ScaleSlider
-            title="Role fit"
+            title=""
             designers={designers}
             valueKey="fitForRole"
             leftLabel="Great fit"
@@ -309,7 +351,10 @@ export default function Dashboard() {
           />
         </section>
 
-        <section className="border border-border rounded-md bg-card p-6">
+        <section className="border border-card-border rounded-lg bg-card p-6">
+          <h2 className="font-sans font-semibold text-base text-foreground mb-6">
+            Archetypes
+          </h2>
           <ArchetypeGrid designers={designers} />
         </section>
       </main>
