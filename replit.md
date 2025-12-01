@@ -4,6 +4,32 @@
 
 A data visualization dashboard for mapping and analyzing team designer skills across multiple competency areas. The application allows managers to track designer capabilities, role maturity, and career progression using interactive radar charts, scale sliders, and archetype categorization. Built following the Atlassian Design System principles for data-dense productivity tools.
 
+## Current State (December 2025)
+
+**Status**: Working prototype with mock data
+
+**What's Built**:
+- Atlassian-style layout matching their product UI patterns
+- Breadcrumb navigation (Positions / Charlie Atlas / ... / Vincent Feeney)
+- Profile header with avatar and "Vincent Feeney" name
+- Tab navigation: Summary, Details, Direct reports (6), Sub-positions (6), Team shape (active)
+- Skills radar chart with designer toggles, abbreviated axis labels, smooth animations
+- Role maturity slider with fixed tick marks and level filtering
+- Role fit slider with level filtering
+- Archetypes grid (Craft-y, Systems-y, Business-y)
+- Add Designer modal with full form
+- 7 mock designers with full skill data
+
+**What's Using Mock Data** (marked with //todo comments):
+- Designer data in Dashboard.tsx (INITIAL_DESIGNERS array)
+- All state is in-memory, not persisted
+
+**Next Steps to Consider**:
+- Connect to database for data persistence
+- Implement backend API endpoints
+- Make other tabs functional (Summary, Details, etc.)
+- Add edit/delete designer functionality
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
