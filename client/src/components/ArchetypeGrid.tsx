@@ -1,8 +1,11 @@
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import DesignerAvatar, { type Designer } from "./DesignerAvatar";
 import { Badge } from "@/components/ui/badge";
 
 interface ArchetypeGridProps {
   designers: Designer[];
+  onDeleteDesigner?: (id: string) => void;
 }
 
 const ARCHETYPES = ["Craft-y", "Systems-y", "Business-y"] as const;
@@ -13,7 +16,7 @@ const ARCHETYPE_COLORS: Record<string, string> = {
   "Business-y": "bg-teal-500",
 };
 
-export default function ArchetypeGrid({ designers }: ArchetypeGridProps) {
+export default function ArchetypeGrid({ designers, onDeleteDesigner }: ArchetypeGridProps) {
   const groupedByArchetype = ARCHETYPES.reduce(
     (acc, archetype) => {
       acc[archetype] = designers.filter((d) => d.archetype === archetype);
@@ -42,7 +45,7 @@ export default function ArchetypeGrid({ designers }: ArchetypeGridProps) {
                 groupedByArchetype[archetype].map((designer) => (
                   <div
                     key={designer.id}
-                    className="flex items-center gap-3 p-3 rounded-md border border-border bg-card hover-elevate"
+                    className="flex items-center gap-3 p-3 rounded-md border border-border bg-card hover-elevate group"
                     data-testid={`archetype-card-${designer.id}`}
                   >
                     <DesignerAvatar
@@ -51,7 +54,7 @@ export default function ArchetypeGrid({ designers }: ArchetypeGridProps) {
                       showTooltip={false}
                       color={ARCHETYPE_COLORS[archetype]}
                     />
-                    <div className="flex flex-col">
+                    <div className="flex flex-col flex-1">
                       <span className="font-sans text-sm font-medium text-foreground">
                         {designer.name}
                       </span>
@@ -59,6 +62,17 @@ export default function ArchetypeGrid({ designers }: ArchetypeGridProps) {
                         {designer.level}
                       </span>
                     </div>
+                    {onDeleteDesigner && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                        onClick={() => onDeleteDesigner(designer.id)}
+                        data-testid={`archetype-delete-${designer.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
                 ))
               )}

@@ -7,13 +7,27 @@ import {
   PolarRadiusAxis,
   ResponsiveContainer,
 } from "recharts";
-import type { Designer } from "./DesignerAvatar";
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
+type Level = "P30" | "P40" | "P50" | "P60" | "P70";
+
+interface Designer {
+  id: string;
+  name: string;
+  level: Level;
+  maturityInRole: number;
+  fitForRole: number;
+  archetype: "Craft-y" | "Systems-y" | "Business-y";
+  skills: Record<string, number>;
+}
 
 interface SkillsRadarChartProps {
   designers: Designer[];
   selectedDesignerIds: Set<string>;
   onToggleDesigner: (id: string) => void;
+  onDeleteDesigner?: (id: string) => void;
   skillCategories: string[];
 }
 
@@ -54,6 +68,7 @@ export default function SkillsRadarChart({
   designers,
   selectedDesignerIds,
   onToggleDesigner,
+  onDeleteDesigner,
   skillCategories,
 }: SkillsRadarChartProps) {
   const chartData = useMemo(() => {
@@ -125,50 +140,68 @@ export default function SkillsRadarChart({
             const color = CHART_COLORS[index % CHART_COLORS.length];
             
             return (
-              <button
+              <div
                 key={designer.id}
-                onClick={() => onToggleDesigner(designer.id)}
-                className={`w-full flex items-center gap-3 cursor-pointer rounded-md p-3 -ml-3 transition-all duration-200 ${
+                className={`w-full flex items-center gap-3 rounded-md p-3 -ml-3 transition-all duration-200 group ${
                   isSelected 
                     ? "bg-accent/50" 
                     : "opacity-50 hover:opacity-75"
                 }`}
-                data-testid={`toggle-designer-${designer.id}`}
               >
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-mono font-medium border-2 border-white dark:border-gray-800 shadow-sm transition-transform duration-200"
-                      style={{ 
-                        backgroundColor: color,
-                        transform: isSelected ? "scale(1)" : "scale(0.9)",
-                      }}
-                    >
-                      {getInitials(designer.name)}
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <span className="font-sans">{designer.name}</span>
-                  </TooltipContent>
-                </Tooltip>
-                <div className="flex flex-col gap-0.5 text-left">
-                  <span className={`font-sans text-sm leading-tight transition-colors duration-200 ${
-                    isSelected ? "text-foreground" : "text-muted-foreground"
-                  }`}>
-                    {designer.name}
-                  </span>
-                  <span className="font-mono text-xs text-muted-foreground">
-                    {designer.level}
-                  </span>
-                </div>
-                <div 
-                  className="ml-auto w-3 h-3 rounded-full border-2 transition-all duration-200"
-                  style={{ 
-                    borderColor: color,
-                    backgroundColor: isSelected ? color : "transparent",
-                  }}
-                />
-              </button>
+                <button
+                  onClick={() => onToggleDesigner(designer.id)}
+                  className="flex items-center gap-3 flex-1 cursor-pointer"
+                  data-testid={`toggle-designer-${designer.id}`}
+                >
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-mono font-medium border-2 border-white dark:border-gray-800 shadow-sm transition-transform duration-200"
+                        style={{ 
+                          backgroundColor: color,
+                          transform: isSelected ? "scale(1)" : "scale(0.9)",
+                        }}
+                      >
+                        {getInitials(designer.name)}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <span className="font-sans">{designer.name}</span>
+                    </TooltipContent>
+                  </Tooltip>
+                  <div className="flex flex-col gap-0.5 text-left">
+                    <span className={`font-sans text-sm leading-tight transition-colors duration-200 ${
+                      isSelected ? "text-foreground" : "text-muted-foreground"
+                    }`}>
+                      {designer.name}
+                    </span>
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {designer.level}
+                    </span>
+                  </div>
+                  <div 
+                    className="ml-auto w-3 h-3 rounded-full border-2 transition-all duration-200"
+                    style={{ 
+                      borderColor: color,
+                      backgroundColor: isSelected ? color : "transparent",
+                    }}
+                  />
+                </button>
+                {onDeleteDesigner && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteDesigner(designer.id);
+                    }}
+                    data-testid={`delete-designer-${designer.id}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
             );
           })}
         </div>
