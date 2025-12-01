@@ -27,8 +27,14 @@ A data visualization dashboard for mapping and analyzing team designer skills ac
 **Next Steps to Consider**:
 - Connect to database for data persistence
 - Implement backend API endpoints
-- Make other tabs functional (Summary, Details, etc.)
 - Add edit/delete designer functionality
+
+**Planned Feature: Multi-Manager Navigation**:
+- "Info Pro Managers" breadcrumb links to a managers listing page
+- Managers listing page shows all managers with "Add Manager" CTA
+- Clicking a manager navigates to their team view (the current Team shape dashboard)
+- Each manager has their own set of designers
+- Data model needs: Manager entity with relationship to Designers
 
 ## User Preferences
 

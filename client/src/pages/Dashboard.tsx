@@ -1,8 +1,6 @@
 import { useState, useCallback } from "react";
-import { Plus, Home, Bell, HelpCircle, Settings, User, Search } from "lucide-react";
+import { Plus, Home, Bell, HelpCircle, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -244,31 +242,15 @@ export default function Dashboard() {
         </div>
       </nav>
 
+      {/* todo: "Info Pro Managers" breadcrumb will link to managers listing page */}
+      {/* todo: Managers listing page will show all managers with "Add Manager" CTA */}
+      {/* todo: Clicking a manager navigates to their team view (this current page) */}
       <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-6 pt-4 pb-0">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-            <span className="hover:text-foreground cursor-pointer">Positions</span>
-            <span>/</span>
-            <span className="hover:text-foreground cursor-pointer">Charlie Atlas</span>
-            <span>/</span>
-            <span>...</span>
-            <span>/</span>
-            <span className="text-foreground">Vincent Feeney</span>
-            <Button variant="ghost" size="icon" className="ml-1 h-6 w-6 text-muted-foreground hover:text-foreground">
-              <Search className="w-4 h-4" />
-            </Button>
-          </div>
-          
-          <div className="flex items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src="" />
-                <AvatarFallback className="bg-amber-100 text-amber-800 font-sans font-medium">VF</AvatarFallback>
-              </Avatar>
-              <h1 className="font-sans font-semibold text-2xl text-foreground">
-                Vincent Feeney
-              </h1>
-            </div>
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <span className="text-sm font-medium text-foreground cursor-pointer hover:text-primary transition-colors" data-testid="link-info-pro-managers">
+              Info Pro Managers
+            </span>
             <Button onClick={() => setIsModalOpen(true)} data-testid="button-add-designer">
               <Plus className="w-4 h-4 mr-2" />
               Add Designer
@@ -276,20 +258,6 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-6 -mb-px">
-            <button className="font-sans text-sm text-muted-foreground pb-3 border-b-2 border-transparent hover:text-foreground transition-colors">
-              Summary
-            </button>
-            <button className="font-sans text-sm text-muted-foreground pb-3 border-b-2 border-transparent hover:text-foreground transition-colors">
-              Details
-            </button>
-            <button className="font-sans text-sm text-muted-foreground pb-3 border-b-2 border-transparent hover:text-foreground transition-colors flex items-center gap-2">
-              Direct reports
-              <Badge variant="secondary" className="font-mono text-xs px-1.5 py-0">6</Badge>
-            </button>
-            <button className="font-sans text-sm text-muted-foreground pb-3 border-b-2 border-transparent hover:text-foreground transition-colors flex items-center gap-2">
-              Sub-positions
-              <Badge variant="secondary" className="font-mono text-xs px-1.5 py-0">6</Badge>
-            </button>
             <button className="font-sans text-sm text-primary font-medium pb-3 border-b-2 border-primary transition-colors">
               Team shape
             </button>
