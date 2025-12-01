@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Plus, Home, Bell, HelpCircle, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -242,15 +243,30 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* todo: "Info Pro Managers" breadcrumb will link to managers listing page */}
-      {/* todo: Managers listing page will show all managers with "Add Manager" CTA */}
-      {/* todo: Clicking a manager navigates to their team view (this current page) */}
+      {/* todo: "Info Pro Managers" breadcrumb links to managers listing page */}
+      {/* todo: Managers listing page shows all managers with "Add Manager" CTA */}
+      {/* todo: Each manager entry links to their team view (this current page) */}
+      {/* todo: URL structure: /managers -> /managers/:managerId */}
       <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-6 pt-4 pb-0">
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <span className="text-sm font-medium text-foreground cursor-pointer hover:text-primary transition-colors" data-testid="link-info-pro-managers">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+            <span className="hover:text-primary cursor-pointer transition-colors" data-testid="link-info-pro-managers">
               Info Pro Managers
             </span>
+            <span>/</span>
+            <span className="text-foreground">Vincent Feeney</span>
+          </div>
+          
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-12 w-12">
+                <AvatarImage src="" />
+                <AvatarFallback className="bg-amber-100 text-amber-800 font-sans font-medium">VF</AvatarFallback>
+              </Avatar>
+              <h1 className="font-sans font-semibold text-2xl text-foreground">
+                Vincent Feeney
+              </h1>
+            </div>
             <Button onClick={() => setIsModalOpen(true)} data-testid="button-add-designer">
               <Plus className="w-4 h-4 mr-2" />
               Add Designer

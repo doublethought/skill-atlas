@@ -10,9 +10,9 @@ A data visualization dashboard for mapping and analyzing team designer skills ac
 
 **What's Built**:
 - Atlassian-style layout matching their product UI patterns
-- Breadcrumb navigation (Positions / Charlie Atlas / ... / Vincent Feeney)
-- Profile header with avatar and "Vincent Feeney" name
-- Tab navigation: Summary, Details, Direct reports (6), Sub-positions (6), Team shape (active)
+- Breadcrumb: "Info Pro Managers / Vincent Feeney" (Info Pro Managers will be clickable link)
+- Profile header with avatar and "Vincent Feeney" name in large font
+- Single active "Team shape" tab
 - Skills radar chart with designer toggles, abbreviated axis labels, smooth animations
 - Role maturity slider with fixed tick marks and level filtering
 - Role fit slider with level filtering
@@ -30,9 +30,11 @@ A data visualization dashboard for mapping and analyzing team designer skills ac
 - Add edit/delete designer functionality
 
 **Planned Feature: Multi-Manager Navigation**:
-- "Info Pro Managers" breadcrumb links to a managers listing page
+- Breadcrumb: "Info Pro Managers / [Manager Name]" where Info Pro Managers is clickable
+- Clicking "Info Pro Managers" goes to managers listing page (/managers)
 - Managers listing page shows all managers with "Add Manager" CTA
-- Clicking a manager navigates to their team view (the current Team shape dashboard)
+- Clicking a manager navigates to their team view (/managers/:managerId)
+- Current page shows: manager avatar + name in header, single "Team shape" tab
 - Each manager has their own set of designers
 - Data model needs: Manager entity with relationship to Designers
 
