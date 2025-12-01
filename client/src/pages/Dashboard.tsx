@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Home, Bell, HelpCircle, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SkillsRadarChart from "@/components/SkillsRadarChart";
 import ScaleSlider from "@/components/ScaleSlider";
@@ -207,20 +207,50 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b border-border bg-background">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="font-sans font-semibold text-xl text-foreground">
-              Skills Map
-            </h1>
-            <p className="font-sans text-sm text-muted-foreground">
-              Team skill assessment dashboard
-            </p>
+      <nav className="sticky top-0 z-50 border-b border-border bg-card">
+        <div className="h-12 px-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Home className="w-5 h-5 text-foreground" />
+            <span className="font-sans font-medium text-sm text-foreground">
+              Team Shape
+            </span>
           </div>
-          <Button onClick={() => setIsModalOpen(true)} data-testid="button-add-designer">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Designer
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" className="font-sans text-sm text-muted-foreground hover:text-foreground">
+              Rovo Chat
+            </Button>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+              <Bell className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+              <HelpCircle className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+              <Settings className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+              <User className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      </nav>
+
+      <header className="border-b border-border bg-background">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="font-sans font-semibold text-2xl text-foreground">
+                Skills Map
+              </h1>
+              <p className="font-sans text-sm text-muted-foreground mt-1">
+                Team skill assessment dashboard
+              </p>
+            </div>
+            <Button onClick={() => setIsModalOpen(true)} data-testid="button-add-designer">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Designer
+            </Button>
+          </div>
         </div>
       </header>
 
