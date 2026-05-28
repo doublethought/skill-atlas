@@ -19,9 +19,8 @@ export default function BrandHeader() {
         aria-label="Skill Atlas"
       >
         <LogoMark />
-        <span className="flex items-baseline gap-1.5 font-display leading-none tracking-normal">
+        <span className="flex items-baseline gap-0.5 font-display leading-none tracking-normal">
           <span className="text-lg font-semibold">Skill</span>
-          {" "}
           <span className="text-lg font-medium text-primary">Atlas</span>
         </span>
       </button>
