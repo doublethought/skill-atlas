@@ -11,7 +11,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-type Level = "P30" | "P40" | "P50" | "P60" | "P70";
+type Level = "Associate Designer" | "Midweight Designer" | "Senior Designer" | "Lead Designer" | "Staff Designer";
 
 interface Designer {
   id: string;
@@ -19,7 +19,7 @@ interface Designer {
   level: Level;
   maturityInRole: number;
   fitForRole: number;
-  archetype: "Craft-y" | "Systems-y" | "Business-y";
+  archetype: "Craft" | "Systems" | "Strategy";
   skills: Record<string, number>;
 }
 
@@ -32,27 +32,27 @@ interface SkillsRadarChartProps {
 }
 
 const CHART_COLORS = [
-  "hsl(217, 91%, 60%)",
-  "hsl(271, 81%, 56%)",
-  "hsl(173, 58%, 39%)",
-  "hsl(43, 96%, 56%)",
-  "hsl(27, 87%, 67%)",
-  "hsl(340, 75%, 55%)",
-  "hsl(200, 80%, 50%)",
-  "hsl(150, 60%, 45%)",
+  "hsl(174, 66%, 40%)",
+  "hsl(256, 67%, 58%)",
+  "hsl(16, 84%, 58%)",
+  "hsl(199, 86%, 48%)",
+  "hsl(43, 92%, 52%)",
+  "hsl(340, 70%, 54%)",
+  "hsl(145, 58%, 42%)",
+  "hsl(25, 72%, 51%)",
 ];
 
 const SKILL_ABBREVIATIONS: Record<string, string> = {
-  "Product & Tech Knowledge": "PROD/TECH",
-  "Visual Design": "VISUAL",
-  "Interaction Design": "IXD",
-  "Systems and Architecture": "SYSTEMS",
-  "Comms & Influence": "COMMS",
-  "Analytical Thinking": "ANALYSIS",
-  "Design Research": "RESEARCH",
-  "Embraces Change": "CHANGE",
-  "Develops Self and Others": "DEVELOPS",
-  "Manages to Results": "RESULTS",
+  "Product Thinking": "PRODUCT",
+  "Visual & UI Craft": "UI CRAFT",
+  "UX & Interaction Design": "UX",
+  "Design Systems": "SYSTEMS",
+  "Storytelling & Influence": "STORY",
+  "Data-Informed Decisions": "DATA",
+  "Research & Discovery": "RESEARCH",
+  "Prototyping & Experimentation": "PROTO",
+  "AI-Augmented Design": "AI",
+  "Leadership & Collaboration": "LEAD",
 };
 
 function getInitials(name: string): string {
@@ -98,16 +98,16 @@ export default function SkillsRadarChart({
   const selectedDesigners = designers.filter((d) => selectedDesignerIds.has(d.id));
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      <div className="flex-1 min-h-[400px] lg:min-h-[500px]">
+    <div className="flex flex-col gap-6 lg:flex-row">
+      <div className="h-[420px] flex-1 rounded-lg border bg-[linear-gradient(135deg,hsl(var(--background))_0%,hsl(var(--secondary))_48%,hsl(var(--accent))_100%)] p-3 shadow-inner lg:h-[520px]">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart cx="50%" cy="50%" outerRadius="65%" data={chartData}>
-            <PolarGrid stroke="hsl(var(--border))" />
+            <PolarGrid stroke="hsl(var(--border))" radialLines={false} />
             <PolarAngleAxis
               dataKey="shortCategory"
               tick={{
                 fill: "hsl(var(--muted-foreground))",
-                fontSize: 10,
+                fontSize: 11,
                 fontFamily: "var(--font-mono)",
               }}
               tickLine={false}
@@ -117,7 +117,7 @@ export default function SkillsRadarChart({
               domain={[0, 5]}
               tick={{
                 fill: "hsl(var(--muted-foreground))",
-                fontSize: 9,
+                fontSize: 10,
                 fontFamily: "var(--font-mono)",
               }}
               tickCount={6}
@@ -132,8 +132,8 @@ export default function SkillsRadarChart({
                   dataKey={designer.id}
                   stroke={color}
                   fill={color}
-                  fillOpacity={0.12}
-                  strokeWidth={2}
+                  fillOpacity={0.16}
+                  strokeWidth={2.5}
                   animationDuration={400}
                   animationEasing="ease-out"
                 />
@@ -142,9 +142,9 @@ export default function SkillsRadarChart({
           </RadarChart>
         </ResponsiveContainer>
       </div>
-      <div className="lg:w-72 border-l border-border pl-8">
-        <h3 className="font-sans font-semibold text-sm text-foreground mb-6 uppercase tracking-wide">
-          Team Members
+      <div className="rounded-lg border bg-card/90 p-4 shadow-sm lg:w-80">
+        <h3 className="mb-4 text-sm font-semibold text-foreground">
+          Designers
         </h3>
         <div className="space-y-2">
           {designers.map((designer) => {
@@ -154,21 +154,21 @@ export default function SkillsRadarChart({
             return (
               <div
                 key={designer.id}
-                className={`w-full flex items-center gap-3 rounded-md p-3 -ml-3 transition-all duration-200 group ${
+                className={`group flex w-full items-center gap-3 rounded-md p-3 transition-all duration-200 ${
                   isSelected 
-                    ? "bg-accent/50" 
+                    ? "bg-accent shadow-sm ring-1 ring-primary/15" 
                     : "opacity-50 hover:opacity-75"
                 }`}
               >
                 <button
                   onClick={() => onToggleDesigner(designer.id)}
-                  className="flex items-center gap-3 flex-1 cursor-pointer"
+                  className="flex flex-1 cursor-pointer items-center gap-3"
                   data-testid={`toggle-designer-${designer.id}`}
                 >
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div
-                        className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-mono font-medium border-2 border-white dark:border-gray-800 shadow-sm transition-transform duration-200"
+                        className="flex h-10 w-10 items-center justify-center rounded-md border-2 border-white text-xs font-semibold text-white shadow-sm transition-transform duration-200 dark:border-gray-800"
                         style={{ 
                           backgroundColor: color,
                           transform: isSelected ? "scale(1)" : "scale(0.9)",
@@ -192,7 +192,7 @@ export default function SkillsRadarChart({
                     </span>
                   </div>
                   <div 
-                    className="ml-auto w-3 h-3 rounded-full border-2 transition-all duration-200"
+                    className="ml-auto h-3 w-3 rounded-full border-2 transition-all duration-200"
                     style={{ 
                       borderColor: color,
                       backgroundColor: isSelected ? color : "transparent",
@@ -203,7 +203,7 @@ export default function SkillsRadarChart({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                    className="h-8 w-8 opacity-0 text-muted-foreground transition-opacity hover:text-destructive group-hover:opacity-100"
                     onClick={(e) => {
                       e.stopPropagation();
                       onDeleteDesigner(designer.id);

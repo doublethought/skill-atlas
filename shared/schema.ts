@@ -20,7 +20,7 @@ export type User = typeof users.$inferSelect;
 export const managers = pgTable("managers", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
-  avatarColor: text("avatar_color").notNull().default("amber"),
+  avatarColor: text("avatar_color").notNull().default("avatar:aurora"),
 });
 
 export const insertManagerSchema = createInsertSchema(managers).omit({
@@ -30,10 +30,10 @@ export const insertManagerSchema = createInsertSchema(managers).omit({
 export type InsertManager = z.infer<typeof insertManagerSchema>;
 export type Manager = typeof managers.$inferSelect;
 
-export const levelEnum = z.enum(["P30", "P40", "P50", "P60", "P70"]);
+export const levelEnum = z.enum(["Associate Designer", "Midweight Designer", "Senior Designer", "Lead Designer", "Staff Designer"]);
 export type Level = z.infer<typeof levelEnum>;
 
-export const archetypeEnum = z.enum(["Craft-y", "Systems-y", "Business-y"]);
+export const archetypeEnum = z.enum(["Craft", "Systems", "Strategy"]);
 export type Archetype = z.infer<typeof archetypeEnum>;
 
 export const designers = pgTable("designers", {

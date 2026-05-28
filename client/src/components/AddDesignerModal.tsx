@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -24,35 +25,63 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import type { Designer, Level } from "./DesignerAvatar";
 
-const LEVELS: Level[] = ["P30", "P40", "P50", "P60", "P70"];
-const ARCHETYPES = ["Craft-y", "Systems-y", "Business-y"] as const;
+const LEVELS: Level[] = ["Associate Designer", "Midweight Designer", "Senior Designer", "Lead Designer", "Staff Designer"];
+const ARCHETYPES = ["Craft", "Systems", "Strategy"] as const;
 
 const SKILL_CATEGORIES = [
-  "Product & Tech Knowledge",
-  "Visual Design",
-  "Interaction Design",
-  "Systems and Architecture",
-  "Comms & Influence",
-  "Analytical Thinking",
-  "Design Research",
-  "Embraces Change",
-  "Develops Self and Others",
-  "Manages to Results",
+  "Product Thinking",
+  "Visual & UI Craft",
+  "UX & Interaction Design",
+  "Design Systems",
+  "Storytelling & Influence",
+  "Data-Informed Decisions",
+  "Research & Discovery",
+  "Prototyping & Experimentation",
+  "AI-Augmented Design",
+  "Leadership & Collaboration",
 ];
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  level: z.enum(["P30", "P40", "P50", "P60", "P70"]),
-  archetype: z.enum(["Craft-y", "Systems-y", "Business-y"]),
+  level: z.enum(["Associate Designer", "Midweight Designer", "Senior Designer", "Lead Designer", "Staff Designer"]),
+  archetype: z.enum(["Craft", "Systems", "Strategy"]),
   maturityInRole: z.number().min(1).max(5),
   fitForRole: z.number().min(1).max(5),
   skills: z.record(z.string(), z.number().min(1).max(5)),
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+function ScorePicker({
+  value,
+  onChange,
+  testId,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+  testId?: string;
+}) {
+  return (
+    <div className="flex gap-1.5" data-testid={testId}>
+      {[1, 2, 3, 4, 5].map((score) => (
+        <button
+          key={score}
+          type="button"
+          className={`h-7 w-7 shrink-0 rounded-md border text-sm font-semibold transition-all ${
+            value === score
+              ? "border-primary bg-primary text-primary-foreground shadow-sm"
+              : "bg-background text-muted-foreground hover:border-primary/45 hover:text-foreground"
+          }`}
+          onClick={() => onChange(score)}
+        >
+          {score}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 interface AddDesignerModalProps {
   open: boolean;
@@ -79,8 +108,8 @@ export default function AddDesignerModal({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      level: "P40",
-      archetype: "Craft-y",
+      level: "Midweight Designer",
+      archetype: "Craft",
       maturityInRole: 3,
       fitForRole: 3,
       skills: defaultSkills,
@@ -101,15 +130,20 @@ export default function AddDesignerModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-sans text-xl font-semibold">
-            Add Designer
+          <DialogTitle className="text-xl font-semibold">
+            Add designer
           </DialogTitle>
+          <DialogDescription>
+            Add the essentials now. Scores can be refined later.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="rounded-lg border bg-card p-4">
+              <p className="soft-label mb-4">Profile</p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="name"
@@ -154,66 +188,60 @@ export default function AddDesignerModal({
                   </FormItem>
                 )}
               />
+              </div>
+              <div className="mt-4">
+                <FormField
+                  control={form.control}
+                  name="archetype"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Archetype</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger data-testid="select-archetype">
+                            <SelectValue placeholder="Select archetype" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {ARCHETYPES.map((archetype) => (
+                            <SelectItem key={archetype} value={archetype}>
+                              {archetype}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
 
-            <FormField
-              control={form.control}
-              name="archetype"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Archetype</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger data-testid="select-archetype">
-                        <SelectValue placeholder="Select archetype" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {ARCHETYPES.map((archetype) => (
-                        <SelectItem key={archetype} value={archetype}>
-                          {archetype}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="space-y-4">
-              <h4 className="font-sans font-medium text-sm text-foreground">
-                Role Assessment
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="rounded-lg border bg-secondary/35 p-4">
+              <div className="mb-4 flex items-end justify-between gap-4">
+                <div>
+                  <p className="soft-label mb-1">Role signals</p>
+                  <p className="text-sm text-muted-foreground">Quick 1-5 read on current role context.</p>
+                </div>
+                <span className="hidden font-mono text-xs text-muted-foreground sm:block">1 low · 5 high</span>
+              </div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="maturityInRole"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex justify-between">
-                        <FormLabel>Maturity in Role</FormLabel>
-                        <span className="font-mono text-sm text-muted-foreground">
-                          {field.value}
-                        </span>
-                      </div>
+                    <FormItem className="rounded-md bg-card/75 p-3">
+                      <FormLabel>Maturity in role</FormLabel>
                       <FormControl>
-                        <Slider
-                          min={1}
-                          max={5}
-                          step={1}
-                          value={[field.value]}
-                          onValueChange={(v) => field.onChange(v[0])}
-                          data-testid="slider-maturity"
+                        <ScorePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          testId="score-maturity"
                         />
                       </FormControl>
-                      <div className="flex justify-between text-xs text-muted-foreground font-mono">
-                        <span>New</span>
-                        <span>Expert</span>
-                      </div>
                     </FormItem>
                   )}
                 />
@@ -221,59 +249,45 @@ export default function AddDesignerModal({
                   control={form.control}
                   name="fitForRole"
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex justify-between">
-                        <FormLabel>Fit for Role</FormLabel>
-                        <span className="font-mono text-sm text-muted-foreground">
-                          {field.value}
-                        </span>
-                      </div>
+                    <FormItem className="rounded-md bg-card/75 p-3">
+                      <FormLabel>Fit for role</FormLabel>
                       <FormControl>
-                        <Slider
-                          min={1}
-                          max={5}
-                          step={1}
-                          value={[field.value]}
-                          onValueChange={(v) => field.onChange(v[0])}
-                          data-testid="slider-fit"
+                        <ScorePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          testId="score-fit"
                         />
                       </FormControl>
-                      <div className="flex justify-between text-xs text-muted-foreground font-mono">
-                        <span>Poor fit</span>
-                        <span>Great fit</span>
-                      </div>
                     </FormItem>
                   )}
                 />
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h4 className="font-sans font-medium text-sm text-foreground">
-                Skill Categories
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="rounded-lg border bg-card p-4">
+              <div className="mb-4 flex items-end justify-between gap-4">
+                <div>
+                  <p className="soft-label mb-1">Skill areas</p>
+                  <h4 className="text-base font-semibold text-foreground">
+                    Product design competencies
+                  </h4>
+                </div>
+                <span className="hidden font-mono text-xs text-muted-foreground sm:block">1-5</span>
+              </div>
+              <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
                 {skillCategories.map((category) => (
                   <FormField
                     key={category}
                     control={form.control}
                     name={`skills.${category}`}
                     render={({ field }) => (
-                      <FormItem>
-                        <div className="flex justify-between">
-                          <FormLabel className="text-sm">{category}</FormLabel>
-                          <span className="font-mono text-sm text-muted-foreground">
-                            {field.value}
-                          </span>
-                        </div>
+                      <FormItem className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-md border bg-background/70 px-3 py-2">
+                        <FormLabel className="truncate whitespace-nowrap text-sm leading-none">{category}</FormLabel>
                         <FormControl>
-                          <Slider
-                            min={1}
-                            max={5}
-                            step={1}
-                            value={[field.value]}
-                            onValueChange={(v) => field.onChange(v[0])}
-                            data-testid={`slider-skill-${category.replace(/\s+/g, "-").toLowerCase()}`}
+                          <ScorePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            testId={`score-skill-${category.replace(/\s+/g, "-").toLowerCase()}`}
                           />
                         </FormControl>
                       </FormItem>
@@ -283,7 +297,7 @@ export default function AddDesignerModal({
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4">
+            <div className="flex justify-end gap-3 border-t pt-4">
               <Button
                 type="button"
                 variant="outline"
@@ -293,7 +307,7 @@ export default function AddDesignerModal({
                 Cancel
               </Button>
               <Button type="submit" data-testid="button-add-designer">
-                Add Designer
+                Add designer
               </Button>
             </div>
           </form>

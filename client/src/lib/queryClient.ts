@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { getDemoData, isReadOnlyDemo } from "./demoMode";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -12,6 +13,10 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  if (isReadOnlyDemo) {
+    throw new Error(`Read-only demo mode does not allow ${method} ${url}`);
+  }
+
   const res = await fetch(url, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
@@ -24,12 +29,22 @@ export async function apiRequest(
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
-export const getQueryFn: <T>(options: {
+export function getQueryFn<T>(options: {
   on401: UnauthorizedBehavior;
-}) => QueryFunction<T> =
-  ({ on401: unauthorizedBehavior }) =>
-  async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+}): QueryFunction<T> {
+  const { on401: unauthorizedBehavior } = options;
+
+  return async ({ queryKey }) => {
+    const url = queryKey.join("/") as string;
+
+    if (isReadOnlyDemo) {
+      const demoData = getDemoData(url);
+      if (demoData !== undefined) {
+        return demoData as T;
+      }
+    }
+
+    const res = await fetch(url, {
       credentials: "include",
     });
 
@@ -40,6 +55,7 @@ export const getQueryFn: <T>(options: {
     await throwIfResNotOk(res);
     return await res.json();
   };
+}
 
 export const queryClient = new QueryClient({
   defaultOptions: {

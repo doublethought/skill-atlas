@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  getAvatarIndex,
+  getInitials,
+  getOpenPeepsUrl,
+  OPEN_PEEPS_AVATARS,
+} from "@/lib/openPeeps";
 
-export type Level = "P30" | "P40" | "P50" | "P60" | "P70";
+export type Level = "Associate Designer" | "Midweight Designer" | "Senior Designer" | "Lead Designer" | "Staff Designer";
 
 export interface Designer {
   id: string;
@@ -9,7 +15,7 @@ export interface Designer {
   level: Level;
   maturityInRole: number;
   fitForRole: number;
-  archetype: "Craft-y" | "Systems-y" | "Business-y";
+  archetype: "Craft" | "Systems" | "Strategy";
   skills: Record<string, number>;
 }
 
@@ -26,25 +32,16 @@ const sizeClasses = {
   lg: "w-12 h-12 text-base",
 };
 
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
-
 function getAvatarColor(name: string): string {
   const colors = [
-    "bg-blue-500",
-    "bg-purple-500",
-    "bg-teal-500",
+    "bg-teal-600",
+    "bg-violet-600",
     "bg-orange-500",
-    "bg-pink-500",
-    "bg-indigo-500",
-    "bg-cyan-500",
-    "bg-emerald-500",
+    "bg-sky-600",
+    "bg-rose-600",
+    "bg-emerald-600",
+    "bg-cyan-600",
+    "bg-amber-500",
   ];
   const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return colors[hash % colors.length];
@@ -58,14 +55,38 @@ export default function DesignerAvatar({
 }: DesignerAvatarProps) {
   const initials = getInitials(designer.name);
   const bgColor = color || getAvatarColor(designer.name);
+  const openPeepsAvatar = useMemo(() => {
+    return OPEN_PEEPS_AVATARS[getAvatarIndex(`${designer.id}-${designer.name}`)];
+  }, [designer.id, designer.name]);
+  const imageSrc = getOpenPeepsUrl(openPeepsAvatar.seed, openPeepsAvatar.background);
+  const [imageError, setImageError] = useState(false);
 
-  const avatar = (
+  useEffect(() => {
+    setImageError(false);
+  }, [imageSrc]);
+
+  const fallbackAvatar = (
     <div
-      className={`${sizeClasses[size]} ${bgColor} rounded-full flex items-center justify-center text-white font-mono font-medium border-2 border-white dark:border-gray-800 shadow-sm cursor-default`}
+      className={`${sizeClasses[size]} ${bgColor} flex cursor-default items-center justify-center rounded-md border-2 border-white font-mono font-semibold text-white shadow-sm dark:border-gray-800`}
       data-testid={`avatar-${designer.id}`}
     >
       {initials}
     </div>
+  );
+
+  const avatar = imageError ? (
+    fallbackAvatar
+  ) : (
+    <img
+      alt=""
+      src={imageSrc}
+      className={`${sizeClasses[size]} cursor-default rounded-md border-2 border-white bg-card object-cover shadow-sm dark:border-gray-800`}
+      data-testid={`avatar-${designer.id}`}
+      loading="lazy"
+      referrerPolicy="no-referrer"
+      onError={() => setImageError(true)}
+      aria-hidden="true"
+    />
   );
 
   if (!showTooltip) {

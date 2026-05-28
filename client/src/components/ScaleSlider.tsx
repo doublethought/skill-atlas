@@ -20,7 +20,7 @@ interface ScaleSliderProps {
   onLevelFilterChange: (level: Level | "all") => void;
 }
 
-const LEVELS: Level[] = ["P30", "P40", "P50", "P60", "P70"];
+const LEVELS: Level[] = ["Associate Designer", "Midweight Designer", "Senior Designer", "Lead Designer", "Staff Designer"];
 
 export default function ScaleSlider({
   title,
@@ -50,7 +50,7 @@ export default function ScaleSlider({
   }, [filteredDesigners, valueKey]);
 
   return (
-    <div className="space-y-4" data-testid={`scale-slider-${valueKey}`}>
+    <div className="space-y-5" data-testid={`scale-slider-${valueKey}`}>
       {title && (
         <div className="flex items-center justify-between gap-4">
           <h3 className="font-sans font-semibold text-sm text-foreground">{title}</h3>
@@ -65,7 +65,7 @@ export default function ScaleSlider({
               <SelectValue placeholder="Filter by level" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Levels</SelectItem>
+              <SelectItem value="all">All tiers</SelectItem>
               {LEVELS.map((level) => (
                 <SelectItem key={level} value={level}>
                   {level}
@@ -77,14 +77,14 @@ export default function ScaleSlider({
       )}
 
       <div className="relative">
-        <div className="flex justify-between mb-2">
+        <div className="mb-3 flex justify-between rounded-lg border bg-secondary/60 px-3 py-4 shadow-inner">
           {[1, 2, 3, 4, 5].map((score) => (
             <div
               key={score}
               className="flex flex-col items-center"
               style={{ width: "20%" }}
             >
-              <div className="flex flex-wrap justify-center gap-1 min-h-[48px] items-end">
+              <div className="flex min-h-[56px] flex-wrap items-end justify-center gap-1">
                 {groupedByScore[score].map((designer) => (
                   <div
                     key={designer.id}
@@ -98,29 +98,29 @@ export default function ScaleSlider({
           ))}
         </div>
 
-        <div className="relative h-6 flex items-center">
-          <div className="absolute left-[10%] right-[10%] h-[3px] bg-muted rounded-full" />
+        <div className="relative flex h-7 items-center">
+          <div className="absolute left-[10%] right-[10%] h-2 rounded-full bg-gradient-to-r from-teal-500/80 via-sky-400/80 to-orange-400/80 shadow-sm" />
           {[1, 2, 3, 4, 5].map((score) => (
             <div
               key={score}
               className="absolute flex flex-col items-center"
               style={{ left: `${(score - 1) * 20 + 10}%`, transform: "translateX(-50%)" }}
             >
-              <div className="w-[3px] h-4 bg-muted-foreground/40 rounded-full" />
-              <span className="font-mono text-xs text-muted-foreground mt-1">{score}</span>
+              <div className="h-4 w-[3px] rounded-full bg-background shadow-sm" />
+              <span className="mt-1 font-mono text-xs text-muted-foreground">{score}</span>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="flex justify-between items-center text-xs font-sans uppercase tracking-wider text-muted-foreground pt-2">
+      <div className="flex items-center justify-between gap-4 pt-2 text-xs font-medium text-muted-foreground">
         <div className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-sm ${leftColor}`} />
+          <div className={`h-3 w-3 rounded-full ${leftColor}`} />
           <span>{leftLabel}</span>
         </div>
         <div className="flex items-center gap-2">
           <span>{rightLabel}</span>
-          <div className={`w-3 h-3 rounded-sm ${rightColor}`} />
+          <div className={`h-3 w-3 rounded-full ${rightColor}`} />
         </div>
       </div>
     </div>

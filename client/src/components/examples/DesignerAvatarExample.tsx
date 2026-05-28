@@ -3,14 +3,14 @@ import DesignerAvatar, { type Designer } from "../DesignerAvatar";
 const mockDesigner: Designer = {
   id: "1",
   name: "Vincent Feeney",
-  level: "P50",
+  level: "Senior Designer",
   maturityInRole: 3,
   fitForRole: 4,
-  archetype: "Craft-y",
+  archetype: "Craft",
   skills: {
-    "Visual Design": 4,
-    "Interaction Design": 3,
-    "Design Research": 4,
+    "Visual & UI Craft": 4,
+    "UX & Interaction Design": 3,
+    "Research & Discovery": 4,
   },
 };
 
