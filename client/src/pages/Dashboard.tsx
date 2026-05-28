@@ -274,7 +274,7 @@ export default function Dashboard() {
                     value={maturityLevelFilter}
                     onValueChange={(value) => setMaturityLevelFilter(value as Level | "all")}
                   >
-                    <SelectTrigger className="w-32" data-testid="filter-level-maturityInRole">
+                    <SelectTrigger className="w-52 [&>span]:block [&>span]:w-full [&>span]:text-left" data-testid="filter-level-maturityInRole">
                       <SelectValue placeholder="Filter by level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -311,7 +311,7 @@ export default function Dashboard() {
                     value={fitLevelFilter}
                     onValueChange={(value) => setFitLevelFilter(value as Level | "all")}
                   >
-                    <SelectTrigger className="w-32" data-testid="filter-level-fitForRole">
+                    <SelectTrigger className="w-52 [&>span]:block [&>span]:w-full [&>span]:text-left" data-testid="filter-level-fitForRole">
                       <SelectValue placeholder="Filter by level" />
                     </SelectTrigger>
                     <SelectContent>

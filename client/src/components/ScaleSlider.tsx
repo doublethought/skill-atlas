@@ -22,6 +22,18 @@ interface ScaleSliderProps {
 
 const LEVELS: Level[] = ["Associate Designer", "Midweight Designer", "Senior Designer", "Lead Designer", "Staff Designer"];
 
+function ScaleAvatar({ designer }: { designer: Designer }) {
+  return (
+    <div className="group relative flex justify-center">
+      <DesignerAvatar designer={designer} size="md" showTooltip={false} />
+      <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-2 min-w-max -translate-x-1/2 rounded-md border bg-popover px-3 py-2 text-center text-popover-foreground opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+        <p className="whitespace-nowrap text-sm font-medium leading-tight">{designer.name}</p>
+        <p className="mt-1 whitespace-nowrap font-mono text-xs text-muted-foreground">{designer.level}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function ScaleSlider({
   title,
   designers,
@@ -59,13 +71,13 @@ export default function ScaleSlider({
             onValueChange={(value) => onLevelFilterChange(value as Level | "all")}
           >
             <SelectTrigger
-              className="w-32"
+              className="w-52 [&>span]:block [&>span]:w-full [&>span]:text-left"
               data-testid={`filter-level-${valueKey}`}
             >
               <SelectValue placeholder="Filter by level" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All tiers</SelectItem>
+              <SelectItem value="all">All levels</SelectItem>
               {LEVELS.map((level) => (
                 <SelectItem key={level} value={level}>
                   {level}
@@ -90,7 +102,7 @@ export default function ScaleSlider({
                     key={designer.id}
                     className="transition-all duration-300 ease-out"
                   >
-                    <DesignerAvatar designer={designer} size="md" />
+                    <ScaleAvatar designer={designer} />
                   </div>
                 ))}
               </div>

@@ -87,15 +87,11 @@ export default function SkillsRadarChart({
         shortCategory: SKILL_ABBREVIATIONS[category] || category.slice(0, 8).toUpperCase(),
       };
       designers.forEach((designer) => {
-        if (selectedDesignerIds.has(designer.id)) {
-          dataPoint[designer.id] = designer.skills[category] || 0;
-        }
+        dataPoint[designer.id] = designer.skills[category] || 0;
       });
       return dataPoint;
     });
-  }, [designers, selectedDesignerIds, skillCategories]);
-
-  const selectedDesigners = designers.filter((d) => selectedDesignerIds.has(d.id));
+  }, [designers, skillCategories]);
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row">
@@ -123,8 +119,10 @@ export default function SkillsRadarChart({
               tickCount={6}
               axisLine={false}
             />
-            {selectedDesigners.map((designer) => {
+            {designers.map((designer) => {
               const color = designerColorMap.get(designer.id) || CHART_COLORS[0];
+              const isSelected = selectedDesignerIds.has(designer.id);
+
               return (
                 <Radar
                   key={designer.id}
@@ -132,10 +130,10 @@ export default function SkillsRadarChart({
                   dataKey={designer.id}
                   stroke={color}
                   fill={color}
-                  fillOpacity={0.16}
-                  strokeWidth={2.5}
-                  animationDuration={400}
-                  animationEasing="ease-out"
+                  fillOpacity={isSelected ? 0.16 : 0}
+                  strokeOpacity={isSelected ? 1 : 0}
+                  strokeWidth={isSelected ? 2.5 : 0}
+                  isAnimationActive={false}
                 />
               );
             })}
