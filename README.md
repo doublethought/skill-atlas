@@ -116,6 +116,11 @@ Set `DATABASE_URL` in your host environment if you want persistent data. Leave i
 - Drizzle ORM
 - PostgreSQL / Neon-compatible database
 
+## Credits
+
+- Built by [Vincent Feeney](https://vincentfeeney.com)
+- Avatar illustrations use [Open Peeps](https://www.openpeeps.com), a hand-drawn illustration library by [Pablo Stanley](https://www.pablostanley.com)
+
 ## Scripts
 
 ```bash
